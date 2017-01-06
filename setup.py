@@ -44,7 +44,7 @@ setup(
                                'tools/ssh-agent/*']},
     license='MIT',
     install_requires=[
-        'kivy >= 1.9.1',
+        'kivy',
         'pygments >= 2.1',
         'docutils >= 0.12',
         'watchdog >= 0.8',
