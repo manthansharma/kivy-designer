@@ -167,11 +167,15 @@ End of Traceback
             from pip.download import PipSession
             import platform
 
+            if os.getenv('designer_source_dir'):
+                source_dir = os.environ['designer_source_dir']
+            else:
+                source_dir = os.path.join(os.path.dirname(
+                    os.path.realpath(__file__)), '..')
+
             requirements = parse_requirements(os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                '..',
-                '..',
-                'requirements.txt'),
+                source_dir,
+                '..', 'requirements.txt'),
                 session=PipSession()
             )
             env_info = ''
