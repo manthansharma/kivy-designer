@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 import traceback
 import webbrowser
 from distutils.dir_util import copy_tree
@@ -760,12 +761,8 @@ class Designer(FloatLayout):
 
         self.close_popup()
 
-        new_proj_dir = os.path.join(get_config_dir(),
-                                    constants.NEW_PROJECT_DIR_NAME)
-        if os.path.exists(new_proj_dir):
-            shutil.rmtree(new_proj_dir)
-
-        os.mkdir(new_proj_dir)
+        new_proj_dir = tempfile.mkdtemp(prefix='designer_',
+                                        dir=get_config_dir())
 
         template = self._new_dialog.adapter.selection[0].text
         kv_file = NEW_PROJECTS[template][0]
