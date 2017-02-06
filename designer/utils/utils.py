@@ -127,7 +127,9 @@ def get_config_dir():
 def get_kd_dir():
     '''Return kivy designer source/binaries folder
     '''
-    _dir = os.path.dirname(designer.__file__)
+    _dir = os.getenv('designer_source_dir',
+                     os.path.dirname(designer.__file__))
+
     if isinstance(_dir, bytes):
         _dir = _dir.decode(get_fs_encoding())
     return _dir
