@@ -761,8 +761,7 @@ class Designer(FloatLayout):
 
         self.close_popup()
 
-        new_proj_dir = tempfile.mkdtemp(prefix='designer_',
-                                        dir=get_config_dir())
+        new_proj_dir = tempfile.mkdtemp(prefix=constants.NEW_PROJECT_DIR_PREFIX)
 
         template = self._new_dialog.adapter.selection[0].text
         kv_file = NEW_PROJECTS[template][0]
