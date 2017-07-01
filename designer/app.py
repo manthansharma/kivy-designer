@@ -732,12 +732,13 @@ class Designer(FloatLayout):
                                                        'not saved.\nWhat '
                                                        'would you like to do?')
 
-            def save_and_open(*args):
-                self.action_btn_save_pressed()
-                self._show_new_dialog()
+            def save_and_open(save_flag, *args):
+                self.close_popup()
+                if save_flag:
+                    self.action_btn_save_pressed(new_project_on_save=True)
 
-            _confirm_dlg_save.bind(on_dont_save=self._show_new_dialog,
-                                   on_save=save_and_open,
+            _confirm_dlg_save.bind(on_dont_save=partial(save_and_open, False),
+                                   on_save=partial(save_and_open, True),
                                    on_cancel=self.close_popup)
 
             self.popup = Popup(title='New', content=_confirm_dlg_save,
@@ -1013,20 +1014,25 @@ class Designer(FloatLayout):
         else:
             show_message('Failed to save the project!', 5, 'error')
 
-    def action_btn_save_pressed(self, exit_on_save=False, *args):
+    def action_btn_save_pressed(self, exit_on_save=False,
+                                new_project_on_save=False, *args):
         '''Event Handler when ActionButton "Save" is pressed.
         :param exit_on_save: if True, closes the KD after saving the project
+        :param new_project_on_save: If True, open new project dialog after
+                                    saving the project
         '''
         proj = self.project_manager.current_project
         if proj.new_project:
-            self.action_btn_save_as_pressed(exit_on_save=exit_on_save)
-            return
+            self.action_btn_save_as_pressed(exit_on_save=exit_on_save,
+                                            new_project_on_save=
+                                            new_project_on_save)
         else:
             self.save_project()
             if exit_on_save:
                 self._perform_quit()
 
-    def action_btn_save_as_pressed(self, exit_on_save=False, *args):
+    def action_btn_save_as_pressed(self, exit_on_save=False,
+                                   new_project_on_save=False, *args):
         '''Event Handler when ActionButton "Save As" is pressed.
         '''
         if self.popup:
@@ -1041,12 +1047,14 @@ class Designer(FloatLayout):
             if instance.is_canceled():
                 return
 
-            self._perform_save_as(instance, exit_on_save=exit_on_save)
+            self._perform_save_as(instance, exit_on_save=exit_on_save,
+                                  new_project_on_save=new_project_on_save)
 
         XFileSave(title="Enter Folder Name", size_hint=(0.9, 0.9),
                   on_dismiss=save_project, path=def_path)
 
-    def _perform_save_as(self, instance, exit_on_save=False):
+    def _perform_save_as(self, instance, exit_on_save=False,
+                         new_project_on_save=False):
         '''Event handler for 'on_success' event of self._save_as_browser
         '''
 
@@ -1058,7 +1066,10 @@ class Designer(FloatLayout):
         if exit_on_save:
             self._perform_quit()
             return
-        self._perform_open(proj_dir)
+        if new_project_on_save:
+            self._show_new_dialog()
+        else:
+            self._perform_open(proj_dir)
 
     def action_btn_settings_pressed(self, *args):
         '''Event handler for 'on_release' event of
